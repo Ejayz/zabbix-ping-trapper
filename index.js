@@ -76,31 +76,31 @@ cron.CronJob.from({
   start: true,
 });
 
-cron.CronJob.from({
-  cronTime: CRON,
-  onTick: function () {
-    session.pingHost(IP2, function (error, target, sent, rcvd) {
-      console.log("IP2 Ping:", rcvd - sent, "ms");
-      GooglePing(rcvd - sent);
+// cron.CronJob.from({
+//   cronTime: CRON,
+//   onTick: function () {
+//     session.pingHost(IP2, function (error, target, sent, rcvd) {
+//       console.log("IP2 Ping:", rcvd - sent, "ms");
+//       GooglePing(rcvd - sent);
 
-      if (error) {
-        pingFailed1++;
-      } else {
-        pingCount1++;
-      }
-      totalTime1++;
+//       if (error) {
+//         pingFailed1++;
+//       } else {
+//         pingCount1++;
+//       }
+//       totalTime1++;
 
-      if (totalTime1 == PACKETLOSS_COUNT) {
-        const percentage = (pingFailed1 / totalTime1) * 100;
-        GooglePacketLoss(`${percentage}`);
-        pingCount1 = 0;
-        pingFailed1 = 0;
-        totalTime1 = 0;
-      }
-    });
-  },
-  start: true,
-});
+//       if (totalTime1 == PACKETLOSS_COUNT) {
+//         const percentage = (pingFailed1 / totalTime1) * 100;
+//         GooglePacketLoss(`${percentage}`);
+//         pingCount1 = 0;
+//         pingFailed1 = 0;
+//         totalTime1 = 0;
+//       }
+//     });
+//   },
+//   start: true,
+// });
 
 const CloudflarePing = async (data) => {
   try {
