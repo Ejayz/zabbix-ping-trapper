@@ -2,8 +2,9 @@ const ping = require("net-ping");
 const cron = require("cron");
 const zabbix = require("zabbix-promise");
 
-const dotenv = require("dotenv").config;
-
+const dotenv = require("dotenv");
+dotenv.config();
+console.log(JSON.parse(process.env.ZABBIX_TRAPPER)[0].server);
 const IP = process.env.IP || "1.1.1.1";
 const CRON = process.env.CRON || "*/1 * * * * *";
 const PACKETLOSS_COUNT = Number(process.env.PACKETLOSS_COUNT) || 60;
@@ -56,15 +57,21 @@ cron.CronJob.from({
 
 const Ping = async (data) => {
   try {
+    console.log({
+      server: `${ZABBIX_TRAPPER[0].server}`,
+      host: `${ZABBIX_TRAPPER[0].host}`,
+      key: `${ZABBIX_TRAPPER[0].key}`,
+      value: data,
+    });
     const result = await zabbix.sender({
       server: ZABBIX_TRAPPER[0].server,
       host: ZABBIX_TRAPPER[0].host,
       key: ZABBIX_TRAPPER[0].key,
       value: data,
     });
-    console.log(result);
+    console.log("Ping Trapper was sent");
   } catch (error) {
-    console.error(error);
+    console.log("Ping Trapper encountered an error:" + error);
   }
 };
 const PacketLoss = async (data) => {
@@ -75,8 +82,8 @@ const PacketLoss = async (data) => {
       key: ZABBIX_TRAPPER[1].key,
       value: data,
     });
-    console.log(result);
+    console.log("Packetloss Trapper was sent");
   } catch (error) {
-    console.error(error);
+    console.log("Packetloss encountered an error:" + error);
   }
 };
