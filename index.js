@@ -57,12 +57,6 @@ cron.CronJob.from({
 
 const Ping = async (data) => {
   try {
-    console.log({
-      server: `${ZABBIX_TRAPPER[0].server}`,
-      host: `${ZABBIX_TRAPPER[0].host}`,
-      key: `${ZABBIX_TRAPPER[0].key}`,
-      value: data,
-    });
     const result = await zabbix.sender({
       server: ZABBIX_TRAPPER[0].server,
       host: ZABBIX_TRAPPER[0].host,
