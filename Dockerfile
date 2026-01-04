@@ -18,18 +18,7 @@ ENV CRON="*/1 * * * * *"
 ENV PACKETLOSS_COUNT=60
 
 # Zabbix trapper as JSON string
-ENV ZABBIX_TRAPPER='[
-  {
-    "server": "172.16.4.150",
-    "host": "172.16.4.139",
-    "key": "Trapper.Ping"
-  },
-  {
-    "server": "172.16.4.150",
-    "host": "172.16.4.139",
-    "key": "Trapper.PacketLoss"
-  }
-]'
+ENV ZABBIX_TRAPPER='[  {    "server": "172.16.4.150",    "host": "172.16.4.139",    "key": "Trapper.Ping"  },  {    "server": "172.16.4.150",    "host": "172.16.4.139",    "key": "Trapper.PacketLoss"  }]'
 
 # Ensure node runs as PID 1 correctly
 CMD ["node", "index.js"]
