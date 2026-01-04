@@ -53,6 +53,7 @@ cron.CronJob.from({
   cronTime: CRON,
   onTick: function () {
     session.pingHost(IP, function (error, target, sent, rcvd) {
+        console.log(error, target, sent, rcvd)
       Ping(rcvd - sent);
       if (error) {
         pingFailed++;

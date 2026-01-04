@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     g++ \
     git
 
+
 # Install dependencies first (better cache)
 COPY package*.json ./
 RUN npm ci 
