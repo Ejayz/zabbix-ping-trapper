@@ -5,6 +5,13 @@ FROM node:20-alpine
 # Create app directory
 WORKDIR /app
 
+# Install build dependencies for native modules
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git
+
 # Install dependencies first (better cache)
 COPY package*.json ./
 RUN npm ci 
