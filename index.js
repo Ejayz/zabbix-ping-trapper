@@ -4,10 +4,11 @@ const zabbix = require("zabbix-promise");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const IP = process.env.IP.split(",") || "1.1.1.1";
+const IP1 = process.env.IP1 || "1.1.1.1";
+const IP2 = process.env.IP2 || "8.8.8.8"
 const CRON = process.env.CRON || "*/1 * * * * *";
 const PACKETLOSS_COUNT = Number(process.env.PACKETLOSS_COUNT) || 60;
-const ZABBIX_TRAPPER = JSON.parse(process.env.ZABBIX_TRAPPER) || [
+const HOST1 = JSON.parse(process.env.HOST1) || [
   {
     server: "172.16.4.150",
     host: "172.16.4.139",
@@ -17,23 +18,24 @@ const ZABBIX_TRAPPER = JSON.parse(process.env.ZABBIX_TRAPPER) || [
     server: "172.16.4.150",
     host: "172.16.4.139",
     key: "Trapper.PacketLoss1",
+  }
+  
+];
+const HOST2 = JSON.parse(process.env.HOST2) || [
+  {
+    server: "172.16.4.150",
+    host: "172.16.4.139",
+    key: "Trapper.Ping1",
   },
   {
     server: "172.16.4.150",
     host: "172.16.4.139",
-    key: "Trapper.Ping2",
-  },
-  {
-    server: "172.16.4.150",
-    host: "172.16.4.139",
-    key: "Trapper.PacketLoss2",
-  },
+    key: "Trapper.PacketLoss1",
+  }
+  
 ];
 
-if (IP.length !== 2 || ZABBIX_TRAPPER.length !== 4) {
-  console.log("Exitting, Thus not met the required number of paramter for ZABBIX TRAPPER and IP");
-  return 0;
-}
+
 
 const session = ping.createSession({
   networkProtocol: ping.NetworkProtocol.IPv4,
@@ -53,12 +55,14 @@ let totalTime = 0;
 let pingCount1 = 0;
 let pingFailed1 = 0;
 let totalTime1 = 0;
+
+
 cron.CronJob.from({
   cronTime: CRON,
   onTick: function () {
-    session.pingHost(IP[0], function (error, target, sent, rcvd) {
-      console.log(error, target, sent, rcvd);
-      Ping(rcvd - sent);
+    session.pingHost(IP1, function (error, target, sent, rcvd) {
+
+      CloudflarePing(rcvd - sent);
       if (error) {
         pingFailed++;
       } else {
@@ -68,7 +72,7 @@ cron.CronJob.from({
 
       if (totalTime == PACKETLOSS_COUNT) {
         const percentage = (pingFailed / totalTime) * 100;
-        PacketLoss(`${percentage}`);
+        CloudflarePacketLoss(`${percentage}`);
         pingCount = 0;
         pingFailed = 0;
         totalTime = 0;
@@ -83,9 +87,8 @@ cron.CronJob.from({
 cron.CronJob.from({
   cronTime: CRON,
   onTick: function () {
-    session.pingHost(IP[1], function (error, target, sent, rcvd) {
-      console.log(error, target, sent, rcvd);
-      SecondPing(rcvd - sent);
+    session.pingHost(IP2, function (error, target, sent, rcvd) {
+      GooglePing(rcvd - sent);
       if (error) {
         pingFailed1++;
       } else {
@@ -95,7 +98,7 @@ cron.CronJob.from({
 
       if (totalTime1 == PACKETLOSS_COUNT) {
         const percentage = (pingFailed1 / totalTime1) * 100;
-        SecondPacketLoss(`${percentage}`);
+        GooglePacketLoss(`${percentage}`);
         pingCount1 = 0;
         pingFailed1 = 0;
         totalTime1 = 0;
@@ -105,55 +108,55 @@ cron.CronJob.from({
   start: true,
 });
 
-const Ping = async (data) => {
+const CloudflarePing = async (data) => {
   try {
     const result = await zabbix.sender({
-      server: ZABBIX_TRAPPER[0].server,
-      host: ZABBIX_TRAPPER[0].host,
-      key: ZABBIX_TRAPPER[0].key,
+      server: HOST1[0].server,
+      host: HOST1[0].host,
+      key: HOST1[0].key,
       value: data,
     });
-    console.log("Ping Trapper was sent");
+    console.log("Host 1 Ping Trapper was sent");
   } catch (error) {
-    console.log("Ping Trapper encountered an error:" + error);
+    console.log("Host 1 Ping Trapper encountered an error:" + error);
   }
 };
-const PacketLoss = async (data) => {
+const CloudflarePacketLoss = async (data) => {
   try {
     const result = await zabbix.sender({
-      server: ZABBIX_TRAPPER[1].server,
-      host: ZABBIX_TRAPPER[1].host,
-      key: ZABBIX_TRAPPER[1].key,
+      server: HOST1[1].server,
+      host: HOST1[1].host,
+      key: HOST1[1].key,
       value: data,
     });
-    console.log("Packetloss Trapper was sent");
+    console.log("Host 1 Packetloss Trapper was sent");
   } catch (error) {
-    console.log("Packetloss encountered an error:" + error);
+    console.log("Host 1  Packetloss encountered an error:" + error);
   }
 };
-const SecondPing = async (data) => {
+const GooglePing = async (data) => {
   try {
     const result = await zabbix.sender({
-      server: ZABBIX_TRAPPER[2].server,
-      host: ZABBIX_TRAPPER[2].host,
-      key: ZABBIX_TRAPPER[2].key,
+      server: HOST2[0].server,
+      host: HOST2[0].host,
+      key: HOST2[0].key,
       value: data,
     });
-    console.log("Ping Trapper was sent");
+    console.log("Host 2 Ping Trapper was sent");
   } catch (error) {
-    console.log("Ping Trapper encountered an error:" + error);
+    console.log("Host 2 Ping Trapper encountered an error:" + error);
   }
 };
-const SecondPacketLoss = async (data) => {
+const GooglePacketLoss = async (data) => {
   try {
     const result = await zabbix.sender({
-      server: ZABBIX_TRAPPER[3].server,
-      host: ZABBIX_TRAPPER[3].host,
-      key: ZABBIX_TRAPPER[3].key,
+      server: HOST2[1].server,
+      host: HOST2[1].host,
+      key: HOST2[1].key,
       value: data,
     });
-    console.log("Packetloss Trapper was sent");
+    console.log("Host 2 Packetloss Trapper was sent");
   } catch (error) {
-    console.log("Packetloss encountered an error:" + error);
+    console.log("Host 2 Packetloss encountered an error:" + error);
   }
 };
