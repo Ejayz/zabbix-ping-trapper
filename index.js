@@ -1,10 +1,11 @@
 const ping = require("net-ping");
 const cron = require("cron");
 const zabbix = require("zabbix-promise");
-
 const dotenv = require("dotenv");
 dotenv.config();
-console.log(JSON.parse(process.env.ZABBIX_TRAPPER)[0].server);
+
+
+
 const IP = process.env.IP || "1.1.1.1";
 const CRON = process.env.CRON || "*/1 * * * * *";
 const PACKETLOSS_COUNT = Number(process.env.PACKETLOSS_COUNT) || 60;
@@ -20,6 +21,23 @@ const ZABBIX_TRAPPER = JSON.parse(process.env.ZABBIX_TRAPPER) || [
     key: "Trapper.PacketLoss",
   },
 ];
+
+console.log("Check env.")
+console.log("IP",IP)
+console.log("CRON",CRON)
+console.log("PACKETLOSS_COUNT:",PACKETLOSS_COUNT)
+console.log("Ping  Trapper:",{
+      server: ZABBIX_TRAPPER[0].server,
+      host: ZABBIX_TRAPPER[0].host,
+      key: ZABBIX_TRAPPER[0].key,
+    })
+    console.log("Packetloss  Trapper:",{
+      server: ZABBIX_TRAPPER[1].server,
+      host: ZABBIX_TRAPPER[1].host,
+      key: ZABBIX_TRAPPER[1].key,
+    })
+
+
 const session = ping.createSession({
   networkProtocol: ping.NetworkProtocol.IPv4,
   packetSize: 16,
