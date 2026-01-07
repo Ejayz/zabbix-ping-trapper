@@ -1,6 +1,11 @@
 
-# Use LTS (cron + native deps are more stable)
-FROM node:20-alpine
+# Use buildx platform variable to support multi-arch
+FROM --platform=$BUILDPLATFORM node:20-alpine
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ git
 
 # Create app directory
 WORKDIR /app
