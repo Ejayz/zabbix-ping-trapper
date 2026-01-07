@@ -39,14 +39,7 @@ const HOST2 = JSON.parse(process.env.HOST2) || [
   },
 ];
 
-const session = ping.createSession({
-  networkProtocol: ping.NetworkProtocol.IPv4,
-  packetSize: 16,
-  retries: 1,
-  sessionId: process.pid % 65535,
-  timeout: 2000,
-  ttl: 128,
-});
+
 
 let pingCount = 0;
 let pingFailed = 0;
@@ -59,6 +52,14 @@ let totalTime1 = 0;
 cron.CronJob.from({
   cronTime: CRON,
   onTick: function () {
+    const session = ping.createSession({
+  networkProtocol: ping.NetworkProtocol.IPv4,
+  packetSize: 16,
+  retries: 0,
+  sessionId: process.pid % 65535,
+  timeout: 600,
+  ttl: 128,
+});
     session.pingHost(IP1, function (error, target, sent, rcvd) {
       if (error) {
         pingFailed++;
@@ -83,6 +84,14 @@ cron.CronJob.from({
 cron.CronJob.from({
   cronTime: CRON,
   onTick: function () {
+    const session = ping.createSession({
+  networkProtocol: ping.NetworkProtocol.IPv4,
+  packetSize: 16,
+  retries: 0,
+  sessionId: process.pid % 65535,
+  timeout: 600,
+  ttl: 128,
+});
     session.pingHost(IP2, function (error, target, sent, rcvd) {
       console.log("IP2 Ping:", rcvd - sent, "ms");
 
