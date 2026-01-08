@@ -1,9 +1,12 @@
 const FileSystem = require("fs");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const LOGFILE = process.env.LOGFILE || "./logs/logs.log";
 
 const log_file = async (data) => {
-  FileSystem.appendFile("logs/logs.log", `${data}\n`, function (err) {
+  FileSystem.appendFile(LOGFILE, `${data}\n`, function (err) {
     if (err) throw err;
-    console.log("Log file created/appended.");
   });
 };
 
