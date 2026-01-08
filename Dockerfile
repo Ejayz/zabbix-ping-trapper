@@ -30,6 +30,7 @@ COPY . .
 ENV HOST='./Config/configuration.json'
 ENV PACKETLOSS_INTERVAL="10"
 ENV CRON="*/1 * * * * *"
+ENV LOGFILE="./logs/logs.log"
 # Zabbix trapper as JSON string
 
 
