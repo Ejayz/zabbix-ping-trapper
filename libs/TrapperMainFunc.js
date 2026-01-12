@@ -35,10 +35,10 @@ const Process = async (
 
       session.pingHost(IP, function (error, target, sent, rcvd) {
         if (error) {
-          log_file(calculatable() + "- Ping request failed: " + error.toString());
+          log_file(calculatable() + " - Ping request failed: " + error.toString());
           console.log(
-            getCurrentTimestamp() +
-              ` ${IP} Ping request failed: ` +
+            calculatable() +
+              ` - ${IP} Ping request failed: ` +
               error.toString()
           );
           pingFailed++;

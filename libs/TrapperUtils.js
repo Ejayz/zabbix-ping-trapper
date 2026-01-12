@@ -11,20 +11,20 @@ const PostPing = async (IP, ZABBIX_HOST, ZABBIX_KEY, ZABBIX_SERVER, data) => {
       value: data,
     });
     log_file(
-      calculatable() + `- ${IP} Ping Trapper was sent with ` + data + ` ms value.`
+      calculatable() + ` - ${IP} Ping Trapper was sent with ` + data + ` ms value.`
     );
     console.log(
       getCurrentTimestamp() +
-        `${IP} Ping Trapper was sent with ` +
+        ` - ${IP} Ping Trapper was sent with ` +
         data +
         ` ms value.`
     );
   } catch (error) {
     log_file(
-      calculatable() + `- ${IP} Ping Trapper encountered an error:` + error
+      calculatable() + ` - ${IP} Ping Trapper encountered an error:` + error
     );
     console.log(
-      getCurrentTimestamp() + `${IP} Ping Trapper encountered an error:` + error
+      calculatable() + ` - ${IP} Ping Trapper encountered an error:` + error
     );
   }
 };
@@ -46,23 +46,23 @@ const PostPacketloss = async (
 
     log_file(
       calculatable() +
-        `- ${IP} Packetloss Trapper was sent with ` +
+        ` - ${IP} Packetloss Trapper was sent with ` +
         data +
         ` % value.`
     );
     console.log(
-      getCurrentTimestamp() +
-        `${IP} Packetloss Trapper was sent with ` +
+      calculatable() +
+        ` - ${IP} Packetloss Trapper was sent with ` +
         data +
         ` % value.`
     );
   } catch (error) {
     log_file(
-      calculatable() + `- ${IP} Packetloss Trapper encountered an error:` + error
+      calculatable() + ` - ${IP} Packetloss Trapper encountered an error:` + error
     );
     console.log(
-      getCurrentTimestamp() +
-        `${IP} Packetloss Trapper encountered an error:` +
+      calculatable() +
+        ` - ${IP} Packetloss Trapper encountered an error:` +
         error
     );
   }
