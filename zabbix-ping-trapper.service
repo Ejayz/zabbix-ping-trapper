@@ -1,0 +1,15 @@
+[Unit]
+Description=Zabbix Ping Trapper
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/ejayz/.nvm/versions/node/v18.20.8/bin/node /home/ejayz/zabbix-ping-trapper/index.js
+WorkingDirectory=/home/ejayz/zabbix-ping-trapper
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
