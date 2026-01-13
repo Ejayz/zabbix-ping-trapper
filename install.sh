@@ -23,8 +23,9 @@ fi
 echo "📦 Updating system..."
 apt-get update
 
-echo "📦 Installing dependencies..."
-apt-get install -y git curl
+echo "📦 Installing dependencies (git, curl)..."
+apt-get install -y git curl build-essential python3 make g++
+
 
 # -----------------------------
 # Install NVM (root)
@@ -35,14 +36,15 @@ if [ ! -d "$NVM_DIR" ]; then
   curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 fi
 
+# Load NVM
 source "$NVM_DIR/nvm.sh"
 
 # -----------------------------
-# Install Node.js LTS
+# Install Node.js v18 (Hydrogen)
 # -----------------------------
-echo "⬇️ Installing Node.js LTS..."
-nvm install --lts
-nvm use --lts
+echo "⬇️ Installing Node.js lts/hydrogen (v18)..."
+nvm install lts/hydrogen
+nvm use lts/hydrogen
 
 # -----------------------------
 # Clone application
@@ -54,10 +56,10 @@ git clone "$REPO_URL" "$APP_DIR"
 cd "$APP_DIR"
 
 # -----------------------------
-# Install dependencies
+# Install Node dependencies
 # -----------------------------
 echo "📦 Installing Node.js dependencies..."
-npm install --production
+npm install --omit=dev
 
 # -----------------------------
 # Create config directory
@@ -66,7 +68,7 @@ echo "📁 Creating config directory..."
 mkdir -p "$CONFIG_DIR"
 
 # -----------------------------
-# Create .env (sample)
+# Create .env
 # -----------------------------
 echo "📝 Creating .env file..."
 cat <<EOF > "$APP_DIR/.env"
@@ -76,9 +78,9 @@ CRON="*/1 * * * * *"
 EOF
 
 # -----------------------------
-# Create configuration.json (sample)
+# Create configuration.json
 # -----------------------------
-echo "📝 Creating sample configuration.json..."
+echo "📝 Creating configuration.json..."
 cat <<EOF > "$CONFIG_DIR/configuration.json"
 [
   {
@@ -131,7 +133,7 @@ cat <<EOF > "$CONFIG_DIR/configuration.json"
 EOF
 
 # -----------------------------
-# Create start.sh (nvm-safe)
+# Create start.sh
 # -----------------------------
 echo "📝 Creating start.sh..."
 cat <<'EOF' > "$APP_DIR/start.sh"
@@ -140,7 +142,7 @@ cat <<'EOF' > "$APP_DIR/start.sh"
 export NVM_DIR="/root/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-nvm use --lts >/dev/null
+nvm use lts/hydrogen >/dev/null
 
 exec node index.js
 EOF
@@ -176,8 +178,8 @@ systemctl daemon-reload
 systemctl enable "$APP_NAME"
 systemctl restart "$APP_NAME"
 
-echo "✅ Installation completed successfully!"
-echo "📌 Edit config files:"
+echo "✅ Installation complete!"
+echo "📌 Edit config files if needed:"
 echo "  - ${APP_DIR}/.env"
 echo "  - ${CONFIG_DIR}/configuration.json"
 echo
